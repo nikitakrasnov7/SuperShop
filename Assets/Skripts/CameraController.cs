@@ -7,8 +7,8 @@ public class CameraController : MonoBehaviour
 {
     private float rotationSpeed = 0.08f;
     private Vector2 lastTouchPosition;
-    private float minVerticalAngle = -80f; //Минимальный угол наклона вниз
-    private float maxVerticalAngle = 80f;  //Максимальный угол наклона вверх
+    private float minVerticalAngle = -80f; 
+    private float maxVerticalAngle = 80f;  
     private float currentVerticalAngle = 0f;
 
     public PanelTouchController panelContr;
