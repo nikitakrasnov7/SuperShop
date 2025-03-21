@@ -1,53 +1,50 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    public PanelTouchController PanelTouch;
+    private float rotationSpeed = 0.08f;
+    private Vector2 lastTouchPosition;
+    private float minVerticalAngle = -80f; //Минимальный угол наклона вниз
+    private float maxVerticalAngle = 80f;  //Максимальный угол наклона вверх
+    private float currentVerticalAngle = 0f;
 
-    private float sensivity = 0.2f;
-    private float maxAngleY = 80f;
-
-    private float rotX = 0f;
-    private float rotY = 0f;
+    public PanelTouchController panelContr;
 
 
-    private void Update()
+    void Update()
     {
-        float camX = 0;
-        float camY = 0;
-        if (PanelTouch.isPressed) 
+
+
+        if (panelContr.isPressed)
         {
-            foreach(Touch touch in Input.touches)
+
+            foreach (Touch touch in Input.touches)
             {
-                if(touch.fingerId == PanelTouch.fingerId)
+                if (touch.fingerId == panelContr.fingerId)
                 {
-                    if(touch.phase == TouchPhase.Moved)
+                    if (touch.phase == TouchPhase.Began)
                     {
-                        camX = touch.deltaPosition.x;
-                        camY = touch.deltaPosition.y;
-                        rotY += camY;
-
+                        lastTouchPosition = touch.position;
                     }
+                    else if (touch.phase == TouchPhase.Moved)
+                    {
+                        Vector2 deltaPosition = touch.position - lastTouchPosition;
 
-                    //if(touch.phase == TouchPhase.Stationary)
-                    //{
-                    //    camX = 0;
-                    //    camY = 0;
-                    //}
+                        transform.Rotate(Vector3.up, deltaPosition.x * rotationSpeed);
+
+                        currentVerticalAngle -= deltaPosition.y * rotationSpeed;
+                        currentVerticalAngle = Mathf.Clamp(currentVerticalAngle, minVerticalAngle, maxVerticalAngle);
+                        transform.localEulerAngles = new Vector3(currentVerticalAngle, transform.localEulerAngles.y, 0);
+
+                        lastTouchPosition = touch.position;
+                    }
                 }
             }
+
+
         }
-        transform.Rotate(Vector3.up * camX * sensivity);
-
-        rotX -= camY * sensivity;
-        rotX = Mathf.Clamp(rotX, -maxAngleY, maxAngleY);
-
-        transform.localRotation = Quaternion.Euler(rotX, rotY, 0);
-
-
-
-
     }
 }

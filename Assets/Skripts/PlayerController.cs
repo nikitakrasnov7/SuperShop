@@ -4,19 +4,25 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    Rigidbody rigidbody;
+    Rigidbody rb;
     public FixedJoystick Joystick;
+    private float speed = 5f;
 
 
     private void Start()
     {
-        rigidbody = GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();
     }
 
 
     private void FixedUpdate()
     {
-        rigidbody.velocity = new Vector3(Joystick.Vertical, 0, -Joystick.Horizontal);
+        Vector3 localVelocity = new Vector3(Joystick.Horizontal * speed, 0, Joystick.Vertical * speed);
+
+        // ѕреобразуем локальный вектор в глобальный
+        Vector3 globalVelocity = transform.TransformDirection(localVelocity);
+
+        rb.velocity = globalVelocity;
 
     }
 }
